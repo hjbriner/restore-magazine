@@ -9,6 +9,10 @@ body {
 h1 {
   text-align: center;
 }
+#flipbook {
+  width: 600px;
+  height: 800px;
+}
 
 #archive {
   display: flex;

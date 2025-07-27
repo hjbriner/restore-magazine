@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Restore Magazine Viewer</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/stpageflip.min.js"></script>
+</head>
+<body>
+  <div id="flipbook" style="width: 100%; height: 100vh;"></div>
+
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const issueSlug = urlParams.get('issue');
+
+    fetch('issues.json')
+      .then(res => res.json())
+      .then(data => {
+        const issue = data.issues.find(i => i.slug === issueSlug);
+        if (!issue) return alert("Issue not found!");
+
+        const pages = [];
+        for (let i = 1; i <= issue.pages; i++) {
+          pages.push(`issues/${issue.slug}/page${i}.jpg`);
+        }
+
+        const flipbook = new St.PageFlip(document.getElementById("flipbook"), {
+          width: 600,
+          height: 800,
+          size: "stretch",
+          minWidth: 315,
+          minHeight: 400,
+          maxWidth: 1000,
+          maxHeight: 1500,
+          maxShadowOpacity: 0.5,
+          showCover: true,
+          mobileScrollSupport: false
+        });
+
+        flipbook.loadFromImages(pages);
+      });
+  </script>
+</body>
+</html>

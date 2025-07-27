@@ -5,7 +5,51 @@
   <title>Restore Magazine Viewer</title>
   <link rel="stylesheet" href="css/style.css">
   <link rel="icon" href="favicon.ico" type="image/x-icon">
-  <script src="js/stpageflip.min.js"></script>
+  <script src="js/stpageflip.min.js" fetch('issues.json')
+  .then(res => {
+    console.log('issues.json fetched, status:', res.status);
+    return res.json();
+  })
+  .then(data => {
+    console.log('issues.json parsed:', data);
+    const issueSlug = new URLSearchParams(window.location.search).get('issue');
+    console.log('Issue slug from URL:', issueSlug);
+
+    const issue = data.issues.find(i => i.slug === issueSlug);
+    console.log('Issue found:', issue);
+    
+    if (!issue) {
+      alert("Issue not found!");
+      return;
+    }
+
+    const pages = [];
+    for (let i = 1; i <= issue.pages; i++) {
+      const pagePath = `issues/${issue.slug}/page${i}.jpg`;
+      pages.push(pagePath);
+      console.log('Page added:', pagePath);
+    }
+
+    const flipbook = new St.PageFlip(document.getElementById("flipbook"), {
+      width: 600,
+      height: 800,
+      size: "stretch",
+      minWidth: 315,
+      minHeight: 400,
+      maxWidth: 1000,
+      maxHeight: 1500,
+      maxShadowOpacity: 0.5,
+      showCover: true,
+      mobileScrollSupport: false
+    });
+
+    flipbook.loadFromImages(pages);
+    console.log('Flipbook initialized');
+  })
+  .catch(error => {
+    console.error('Error loading issues.json or initializing flipbook:', error);
+  });
+></script>
 </head>
 <body>
   <div id="flipbook" style="width: 100%; height: 100vh;"></div>
